@@ -20,8 +20,11 @@ class MRPrecipJoin(MRJob):
             # Flight data mapper 
             elif len(fields) > 4:
                 flight_date_str, dep_time, dep_delay = fields[2], fields[6], fields[18]
+                
+                # Strip minutes from flight dep time and join w/ nearest hourly precip data
                 flight_date = datetime.strptime(flight_date_str + dep_time, '%m/%d/%Y%H%M')
                 flight_date = flight_date.replace(minute=0)
+                
                 key = flight_date.strftime('%Y-%m-%d %H')
                 value = ('flight', (dep_time, dep_delay))
                 yield key, value
