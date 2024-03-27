@@ -40,12 +40,13 @@ class MRPrecipJoin(MRJob):
             if value_source == 'flight':
                 flights.append(value)
             else:
-                precip = float(value)
+                precip = value
 
-
+        '''
         for flight in flights:
             # Key: YYYY/MM/DD H; Value: departure time (HH:MM), departure delay (min), precip (in)
             yield key, (flight[0], flight[1], precip) 
+        '''
 
 if __name__ == '__main__':
     
