@@ -1,6 +1,7 @@
 from mrjob.job import MRJob
 from datetime import datetime
 import time
+import logging
 
 class MRPrecipJoin(MRJob):
     '''
@@ -36,22 +37,31 @@ class MRPrecipJoin(MRJob):
         flights = []
         precip = None
 
-        for value in list(values):
-            value_source = value[0]
-            
-            if value_source == 'flight':
-                flights.append(value[1])
-            elif value_source == 'precip':
-                precip = value[1]
+        try:
 
-        
-        for flight in flights:
-            # Key: YYYY/MM/DD H; Value: departure time (HH:MM), departure delay (min), precip (in)
-            yield key, (flight[0], flight[1], precip) 
+            # First pass to find precipitation value
+            for value in values:
+
+                value_type, data = value
+                
+                if value_type == 'precip':
+                    if precip is None: 
+                        precip = data
+                elif value_type == 'flight':
+                    flights.append(value[1])
+
+
+            for flight in flights:
+                # Key: YYYY/MM/DD H; Value: departure time (HH:MM), departure delay (min), precip (in)
+                yield key, (flight[0], flight[1], precip)
+        except Exception as e:
+            logging.error(f"Reducer error for key {key}: {str(e)}")
+            # Optionally, yield an error message for debugging
+            yield "error", f"Reducer error for key {key}: {str(e)}"
+
         
 
 if __name__ == '__main__':
-    
     start = time.time()
     MRPrecipJoin.run()
     end = time.time()
