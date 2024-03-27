@@ -36,7 +36,7 @@ class MRPrecipJoin(MRJob):
         flights = []
         precip = None
 
-        for value_source, value in values:
+        for value_source, value in list(values):
             if value_source == 'flight':
                 flights.append(value)
             else:
