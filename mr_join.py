@@ -1,5 +1,6 @@
 from mrjob.job import MRJob
 from datetime import datetime
+import time
 
 class MRPrecipJoin(MRJob):
     '''
@@ -46,4 +47,8 @@ class MRPrecipJoin(MRJob):
             yield key, (flight[0], float(flight[1]), precip) 
 
 if __name__ == '__main__':
+    
+    start = time.time()
     MRPrecipJoin.run()
+    end = time.time()
+    print(f"Elapsed Time: {end-start}")
